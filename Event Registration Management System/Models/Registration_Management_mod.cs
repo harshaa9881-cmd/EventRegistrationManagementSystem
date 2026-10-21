@@ -12,6 +12,8 @@ namespace Registration_Management_mod.Models
     }
     public class Reg
     {
+        public int EId { get; set; }
+        public int PId { get; set; }
         public int RId { get; set; }
         
         public DateTime RDate { get; set; }
@@ -19,7 +21,7 @@ namespace Registration_Management_mod.Models
         public decimal Paidfee { get; set; }
         public Status PStatus { get; set; }
 
-        public Reg(int rid,DateTime rdate, decimal paidfee,Status status )
+        public Reg(int pid, int eid,int rid,DateTime rdate, decimal paidfee,Status status )
         {
             RId = rid;
             RDate = rdate;
