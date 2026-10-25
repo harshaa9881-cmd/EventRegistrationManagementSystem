@@ -54,7 +54,7 @@ namespace Participant_Registration_Management_Serv.Services
             // Participant phone number
             Console.Write("Enter Participant Phone Number: ");
             string? ph = Console.ReadLine();
-            int phno = int.Parse(ph);
+            double phno = double.Parse(ph);
             if (string.IsNullOrWhiteSpace(ph))
             {
                 Console.WriteLine("Phone number must contain 10 digits.");
@@ -75,7 +75,7 @@ namespace Participant_Registration_Management_Serv.Services
         // Display all participants
         public void Display()
         {
-            if (Pman != null)
+            if (Pman == null)
             {
                 Console.WriteLine("No participant records found.");
             }

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Registration_Management_Serv.Services;
+using Registration_Management_mod.Models;
 
 namespace Event_Management_Serv.Services
 {
@@ -11,7 +13,7 @@ namespace Event_Management_Serv.Services
     {
         //list for eventmanagement
         public List<EventMan> Eman = new List<EventMan>();
-
+        public RegistrationManagement rm = new RegistrationManagement();
         //event registration
         public void RegEvent()
         {
@@ -93,7 +95,7 @@ namespace Event_Management_Serv.Services
                 Console.WriteLine("Invalid input. Please enter in a valid number.");
                 return;
             }
-            if (efee! >= 0)
+            if (efee! <= 0)
             {
                 Console.WriteLine("Invalid number, must be positive");
                 return;
@@ -108,13 +110,11 @@ namespace Event_Management_Serv.Services
             {
                 Console.WriteLine("no record found");
             }
-            else
-            {
-                foreach (var e in Eman)
+            foreach (var e in Eman)
                 {
-                    Console.WriteLine("Eventid: " + e.EventId, "EventName: " + e.EventName, "EventVenue: " + e.venue, "Event date and time: " + e.EventDate, "EventCapacity: " + e.Capacity, "EventFee: " + e.RegFee);
+                    Console.WriteLine($"Eventid: {e.EventId}, EventName: {e.EventName}, EventVenue: {e.venue}, Event date and time: {e.EventDate}, EventCapacity: {e.Capacity}, EventFee: {e.RegFee}");
                 }
-            }
+            
 
         }
         public void SearchbyId()
@@ -156,10 +156,10 @@ namespace Event_Management_Serv.Services
 
             if (string.IsNullOrWhiteSpace(Eventnorv))
                 Console.WriteLine("Event id cannot be empty ");
-            else if (Eman.Any(e => e.venue.ToLower() == Eventnorv) || Eman.Any(e => e.EventName.Contains(""+ Eventnorv,StringComparison.CurrentCultureIgnoreCase)))
+            else if (Eman.Any(e => e.venue.ToLower() == Eventnorv) || Eman.Any(e => e.EventName.Contains("" + Eventnorv, StringComparison.CurrentCultureIgnoreCase)))
             {
                 Console.WriteLine("name or venue found");
-                var id = Eman.Where(e => e.venue.ToLower() == Eventnorv || e.EventName.Contains("" + Eventnorv,StringComparison.CurrentCultureIgnoreCase)) ;
+                var id = Eman.Where(e => e.venue.ToLower() == Eventnorv || e.EventName.Contains("" + Eventnorv, StringComparison.CurrentCultureIgnoreCase));
                 foreach (var i in id)
                 {
                     Console.WriteLine($"Eventid: {i.EventId}, EventName: {i.EventName}, EventVenue:  {i.venue}, Event date and time:  {i.EventDate}, EventCapacity:  {i.Capacity}, EventFee: {i.RegFee} ");
@@ -222,9 +222,21 @@ namespace Event_Management_Serv.Services
                     Console.WriteLine("Invalid input. Please enter in a valid number.");
                     return;
                 }
-                if (capacity! >= 0)
+                if (capacity <= 0)
                 {
-                    Console.WriteLine("Invalid number, must be positive");
+                    Console.WriteLine("Capacity must be positive");
+                    return;
+                }
+
+                // Count registrations that are not cancelled
+                
+
+                int count = rm.Rman.Count(r =>
+                    r.EId == eid && r.PStatus != Status.Cancelled);
+
+                if (capacity < count)
+                {
+                    Console.WriteLine("Capacity cannot be less than active registrations");
                     return;
                 }
 
@@ -239,7 +251,7 @@ namespace Event_Management_Serv.Services
                     Console.WriteLine("Invalid input. Please enter in a valid number.");
                     return;
                 }
-                if (efee! >= 0)
+                if (efee < 0)
                 {
                     Console.WriteLine("Invalid number, must be positive");
                     return;
@@ -256,5 +268,33 @@ namespace Event_Management_Serv.Services
                 Console.WriteLine("Details updated");
             }
         }
-    }
+
+        // Delete Event
+        public void Delete()
+        {
+            Console.Write("Enter Event ID to delete: ");
+            int eid = int.Parse(Console.ReadLine());
+
+            var ev = Eman.FirstOrDefault(e => e.EventId == eid);
+
+            if (ev == null)
+            {
+                Console.WriteLine("Event not found");
+                return;
+            }
+
+            // Check registration history
+            RegistrationManagement rm = new RegistrationManagement();
+
+            if (rm.Rman.Any(r => r.EId == eid))
+            {
+                Console.WriteLine("Cannot delete event because registration history exists");
+                return;
+            }
+
+            Eman.Remove(ev);
+            Console.WriteLine("Event deleted successfully");
+        }
+    }  
+    
 }

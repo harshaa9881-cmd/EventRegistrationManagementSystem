@@ -10,10 +10,11 @@ namespace Registration_Management_Serv.Services
 {
     public class RegistrationManagement
     {
+        public Participants pm;
+        public EventManagement em;
         // List for registration management
         public List<Reg> Rman = new List<Reg>();
-        Participants pm = new Participants();
-        EventManagement em = new EventManagement();
+        
         int rid = 1;
         // Register for an event
         public void RegEvent()
@@ -25,6 +26,8 @@ namespace Registration_Management_Serv.Services
 
             if (part == null)
                 Console.WriteLine("Participant not found");
+
+
             Console.WriteLine("Enter Event ID:");
             int eid = int.Parse(Console.ReadLine());
 
@@ -134,6 +137,22 @@ namespace Registration_Management_Serv.Services
 
             Console.WriteLine("Attendance marked successfully");
 
+        }
+        // Load registrations from JSON
+        public void LoadRegistrations(List<Reg> registrations)
+        {
+            Rman = registrations;
+
+            if (Rman.Count > 0)
+            {
+                rid = Rman.Max(r => r.RId) + 1;
+            }
+        }
+
+        // Get registrations for saving
+        public List<Reg> GetRegistrations()
+        {
+            return Rman;
         }
     }
 }

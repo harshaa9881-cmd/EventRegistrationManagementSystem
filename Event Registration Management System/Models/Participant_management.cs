@@ -9,9 +9,9 @@ namespace Participant_Management_mod.Models
         public int PId { get; set; }
         public string PName { get; set; }
         public string Email { get; set; }
-        public int Phno { get; set; }
+        public double Phno { get; set; }
 
-        public PartMan(int pid, string pname, string email,int phno)
+        public PartMan(int pid, string pname, string email,double phno)
         {
             PId = pid;
             PName = pname;
